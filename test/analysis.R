@@ -8,8 +8,10 @@ library(MOFA2)
 ## Load model ##
 ################
 
-file <- "/Users/ricard/data/peer/hdf5/with_sparsity/model_medium.hdf5"
+file <- "/Users/ricard/data/peer/hdf5/with_sparsity/model_fast.hdf5"
 model <- load_model(file)
+
+plot_factor_cor(model)
 
 ####################################
 ## (Optional) add sample metadata ##
@@ -31,9 +33,9 @@ model <- load_model(file)
 ###############################
 
 # We can remove factors that explain little variance (in this case, we require at least 1%)
-r2 <- model@cache$variance_explained$r2_per_factor
-factors <- sapply(r2, function(x) x[,1]>0.01)
-model <- subset_factors(model, which(apply(factors,1,sum) >= 1))
+# r2 <- model@cache$variance_explained$r2_per_factor
+# factors <- sapply(r2, function(x) x[,1]>0.01)
+# model <- subset_factors(model, which(apply(factors,1,sum) >= 1))
 
 #############################
 ## Plot variance explained ##
@@ -56,8 +58,8 @@ plot_variance_explained_per_feature(model, factors = "all", features = features)
 ########################
 
 plot_factor(model, 
-  factor = 1,
-  color_by = "lineage"  # lineage is a column in model@samples.metadata
+  factor = 1
+  # color_by = "lineage"  # lineage is a column in model@samples.metadata
 )
 
 # Other options...
@@ -70,6 +72,7 @@ p <- plot_factor(model,
   add_violin = TRUE,      # add violin plots
 )
 
+plot_factors(model, factor = c(1,2))
 
 ###########################
 ## Plot feature loadings ##
@@ -82,7 +85,7 @@ p <- plot_factor(model,
 
 # Plot the distribution of loadings for Factor 1.
 plot_weights(model,
-  view = "RNA",
+  # view = "RNA",
   factor = 1,
   nfeatures = 10,     # Top number of features to highlight
   scale = T           # Scale loadings from -1 to 1
@@ -121,3 +124,32 @@ plot_factor_cor(model)
 
 outfile <- "/Users/ricard/data/peer_wrapper/test/model_updated.rds"
 saveRDS(model, outfile)
+
+
+
+
+
+
+
+
+
+models <- list()
+models[[1]] <- load_model("/Users/ricard/data/peer/hdf5/with_sparsity/model_fast.hdf5")
+models[[2]] <- load_model("/Users/ricard/data/peer/hdf5/with_sparsity/model_medium.hdf5")
+
+compare_factors(models)
+
+
+
+library(purrr)
+peer <- read.table("/Users/ricard/data/peer/data/X.named.txt.gz") %>% as.matrix %>% t
+mofa <- get_factors(model)[[1]]
+
+r <- cor(peer,mofa)
+
+corrplot::corrplot(abs(r))
+
+plot_factor_cor(model)
+
+samples(model)[[1]] <- rownames(peer)
+write.table(t(round(mofa,5)), file="/Users/ricard/data/peer/mofa_factors.txt", sep=",", col.names = T, row.names = T, quote=F)
