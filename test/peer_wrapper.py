@@ -1,7 +1,7 @@
-#!/scratch/ricard/software/anaconda3/bin/python
+#!/g/stegle/ricard/anaconda/envs/mofa2/bin/python
 #SBATCH -N 1                        # number of nodes
 #SBATCH -n 1                        # number of cores
-#SBATCH --mem 20G                   # memory pool for all cores
+#SBATCH --mem 7G                   # memory pool for all cores
 #SBATCH -o slurm.%N.%j.out          # STDOUT
 #SBATCH -e slurm.%N.%j.err          # STDERR
 #SBATCH --mail-type=END,FAIL        # notifications for job done & fail
@@ -18,7 +18,7 @@ import pandas as pd
 ###############
 
 # datafile = "/hps/nobackup2/research/stegle/users/ricard/peer/data/FullFreeze_Corrected_iPSC_TPM2_20180626_hqS.txt.gz"
-datafile = "/g/stegle/ricard/peer_wrapper/test/FullFreeze_Corrected_iPSC_TPM2_20180626_hqS.txt.gz"
+datafile = "/g/stegle/ricard/peer/data/FullFreeze_Corrected_iPSC_TPM2_20180626_hqS.txt.gz"
 
 # The data has to be loaded as a pandas dataframe or as a numpy matrix with dimensions (samples,features)
 data = pd.read_csv(datafile, header=0, sep='\t', index_col=0)
