@@ -8,7 +8,7 @@ library(MOFA2)
 ## Load model ##
 ################
 
-file <- "/Users/ricard/data/peer/hdf5/with_sparsity/model_medium.hdf5"
+file <- "/Users/ricard/data/peer_wrapper/model.hdf5"
 model <- load_model(file)
 
 ####################################
@@ -30,10 +30,10 @@ model <- load_model(file)
 ## (Optional) Subset factors ##
 ###############################
 
-# We can remove factors that explain little variance (in this case, we require at least 1%)
-r2 <- model@cache$variance_explained$r2_per_factor
-factors <- sapply(r2, function(x) x[,1]>0.01)
-model <- subset_factors(model, which(apply(factors,1,sum) >= 1))
+# We can remove factors that explain little variance (in this case, we require at least 0.01%)
+# r2 <- model@cache$variance_explained$r2_per_factor
+# factors <- sapply(r2, function(x) x[,1]>0.0001)
+# model <- subset_factors(model, which(apply(factors,1,sum) >= 1))
 
 #############################
 ## Plot variance explained ##
@@ -46,30 +46,12 @@ plot_variance_explained(model, factors=c(1,2,3))
 # Plot total variance explained using all factors
 plot_variance_explained(model, plot_total = TRUE)[[2]]
 
-# Plot variance explained for individual features
-features <- c("Rbp4","Ttr","Spink1","Mesp1")
-plot_variance_explained_per_feature(model, factors = "all", features = features) # using all factors
-plot_variance_explained_per_feature(model, factors = "all", features = features) # using specific factors
-
 ########################
 ## Plot factor values ##
 ########################
 
-plot_factor(model, 
-  factor = 1,
-  color_by = "lineage"  # lineage is a column in model@samples.metadata
-)
-
-# Other options...
-p <- plot_factor(model, 
-  factor = 1,
-  color_by = "lineage",
-  dot_size = 0.2,         # change dot size
-  dodge = TRUE,           # dodge points with different colors
-  legend = FALSE,         # remove legend
-  add_violin = TRUE,      # add violin plots
-)
-
+plot_factor(model, factor = 1)
+plot_factors(model, factor = c(1,2))
 
 ###########################
 ## Plot feature loadings ##
@@ -82,30 +64,18 @@ p <- plot_factor(model,
 
 # Plot the distribution of loadings for Factor 1.
 plot_weights(model,
-  view = "RNA",
+  view = 1,
   factor = 1,
   nfeatures = 10,     # Top number of features to highlight
   scale = T           # Scale loadings from -1 to 1
 )
 
-# If we are not interested in the directionality of the effect, we can take the absolute value of the loadings. 
-# We can also highlight some genes of interest using the argument `manual` to see where in the distribution they lie:
-plot_weights(model,
-  view = "RNA",
-  factor = 1,
-  nfeatures = 5,
-  manual = list(c("Snai1","Mesp1","Phlda2"), c("Rhox5","Elf5")),
-  scale = T,
-  abs = T
-)
-
 # If you are not interested in the full distribution, but just on the top loadings:
 plot_top_weights(model, 
-  view = "RNA", 
+  view = 1, 
   factor = 1, 
   nfeatures = 10,
-  scale = T, 
-  abs = T
+  scale = T
 )
 
 ######################################
@@ -114,10 +84,26 @@ plot_top_weights(model,
 
 plot_factor_cor(model)
 
+###################
+## Fetch factors ##
+###################
 
-########################
-## Save updated model ##
-########################
+# fetch factors in matrix format, with dimensions (nfactors,nsamples)
+factors <- get_factors(model)[[1]]
+dim(factors)
 
-outfile <- "/Users/ricard/data/peer_wrapper/test/model_updated.rds"
-saveRDS(model, outfile)
+# fetch factors in long data.frame format, with columns "sample", "factor", "value"
+factors <- get_factors(model, as.data.frame = T)
+head(factors) 
+
+###################
+## Fetch weights ##
+###################
+
+# fetch weights in matrix format, with dimensions (nfeatures,nfactors)
+weights <- get_weights(model)[[1]]
+dim(weights)
+
+# fetch weights in long data.frame format, with columns "feature", "view", "factor", "value"
+weights <- get_weights(model, as.data.frame = T)
+head(weights)
