@@ -10,7 +10,8 @@
 pip install mofapy2
 
 # R
-devtools::install_github("bioFAM/MOFA2", build_opts = c("--no-resave-data"))
+devtools::install_github("bioFAM/MOFA2/MOFA2", build_opts = c("--no-resave-data --no-build-vignettes"))
+
 
 #############
 ## Folders ##
