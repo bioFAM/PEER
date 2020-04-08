@@ -75,22 +75,6 @@ train_opts$verbose <- FALSE
 # random seed
 train_opts$seed <- 1
 
-#################################################
-## (Optional) Set stochastic inference options ##
-#################################################
-
-# NOTE: this is only required for large data sets that do not fit into the GPU or CPU memory
-# stochastic_opts <- get_default_stochastic_options(object)
-
-# batch size has to be a multiple of 5 (0.05, 0.10, ..., 0.25, maximum is 0.5)
-# stochastic_opts$batch_size <- 0.5
-
-# initial learning rate recommended between 0.25 and 0.5
-# stochastic_opts$learning_rate <- 0.5
-
-# forgetting rate recommended between 0.25 and 0.75
-# stochastic_opts$forgetting_rate <- 0.5
-
 #############################
 ## Prepare the MOFA object ##
 #############################
@@ -100,7 +84,6 @@ object <- prepare_mofa(
   data_options = data_opts,
   model_options = model_opts,
   training_options = train_opts
-  # stochastic_options = stochastic_opts
 )
 
 ##############

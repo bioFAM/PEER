@@ -43,12 +43,6 @@ ent.set_model_options(factors=10, spikeslab_weights=False, ard_weights=False)
 # - seed
 ent.set_train_options(iter=1000, convergence_mode="fast", startELBO=1, freqELBO=1, gpu_mode=False, verbose=False, seed=42)
 
-# (Optional) Set stochastic inference options
-# - batch_size: batch size, has to be a multiple of 5 (0.05, 0.10, ..., 0.25, maximum is 0.5)
-# - learning_rate: initial learning rate (recommended between 0.25 and 0.5)
-# - forgetting_rate: decreasing learning rate (recommended from 0.25 to 0.75)
-# ent.set_stochastic_options(batch_size=.5, learning_rate=0.75, forgetting_rate=0.5)
-
 ####################################
 ## Build and train the MOFA model ##
 ####################################
